@@ -6,10 +6,43 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# Load nesscery Libraries
+knitr::opts_chunk$set(echo = FALSE)
+# Load necessary Libraries
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(kableExtra)
 
 # Load Dataset 
-
+data <- read.csv("insurance.csv")
 ```
+
+# Group Memeber
+
+# Background
+
+# Exploratory Data Analysis
+
+## Data Statistics
+
+## Data Visualization
+
+## LINE Assumption
+
+# Model Building
+
+## Multiple Linear Regression
+
+## KNN Regression
+
+## Random Forest
+
+# Model Comparison
+
+# Discussion
+
+# Conclusion
+
+# Code Appendix 
+
 
