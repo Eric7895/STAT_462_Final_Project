@@ -1,0 +1,15 @@
+---
+title: "STAT 462 Final Project"
+author: "Eric Wu"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load nesscery Libraries
+
+# Load Dataset 
+
+```
+
