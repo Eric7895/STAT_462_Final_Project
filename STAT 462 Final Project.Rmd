@@ -23,6 +23,9 @@ data <- read.csv("insurance.csv")
 
 # Exploratory Data Analysis
 ```{r}
+# Check for Null Value
+print(sum(is.na(data)))
+
 # Create dummy variable
 dummy_data <- data %>%
   mutate(
