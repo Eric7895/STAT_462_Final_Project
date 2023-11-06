@@ -22,6 +22,22 @@ data <- read.csv("insurance.csv")
 # Background
 
 # Exploratory Data Analysis
+```{r}
+# Create dummy variable
+dummy_data <- data %>%
+  mutate(
+    is_male = if_else(sex == "male", 1, 0),
+    is_smoker = if_else(smoker == "yes", 1, 0),
+    is_southwest = if_else(region == "southwest", 1, 0),
+    is_southeast = if_else(region == "southeast", 1, 0),
+    is_northwest = if_else(region == "northwest", 1, 0),
+    is_northeast = if_else(region == "northeast", 1, 0)
+  ) %>%
+  select(-sex, -smoker, -region)
+
+# Create standardized dataset for ML that requires scaling
+scaled_data <- scale(dummy_data)
+```
 
 ## Data Statistics
 
