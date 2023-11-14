@@ -1,6 +1,5 @@
 ---
 title: "STAT 462 Final Project"
-author: "Eric Wu"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -19,12 +18,16 @@ data <- read.csv("insurance.csv")
 
 # Group Memeber
 
+Eric Wu
+
 # Background
+
+The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI, how many children, Smoker or not, and which region in the U.S they lived. The goal of the project is to compare multiple ML method including multiple linear regression in order to find the best model with the lowest MSE value. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
 
 # Exploratory Data Analysis
 ```{r}
 # Check for Null Value
-print(sum(is.na(data)))
+na <- sum(is.na(data))
 
 # Create dummy variable
 dummy_data <- data %>%
@@ -43,6 +46,25 @@ scaled_data <- scale(dummy_data)
 ```
 
 ## Data Statistics
+```{r}
+# Create a basic statistic table using the quantitative variables of the dataset.
+quant <- c("age", "bmi", "children", "charges")
+
+summary_stat <- psych::describe(data[quant], skew = FALSE) %>%
+  round(2)
+
+summary_stat %>%
+  kable(
+    caption = 'Basic statistics of quantitative variables',
+    booktabs = TRUE,
+    align = c('l', rep('c', 8))
+  ) %>%
+  kableExtra::kable_styling(
+    bootstrap_options = c('striped', 'condensed'),
+    font_size = 10,
+    latex_options = "hold_position"
+  ) 
+```
 
 ## Data Visualization
 
