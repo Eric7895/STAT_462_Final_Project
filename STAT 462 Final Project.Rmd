@@ -66,6 +66,8 @@ summary_stat %>%
   ) 
 ```
 
+The statistic table presents some of the basic statistic summaries for each quantitative variables. Including the number of records, mean, standard deviation, minimum, maximum, range, and standard error of the corresponding variable. Some interesting finding including the average of BMI, as the average BMI category of the dataset is classified as obesity, this suggested that most people probably are classified as overweight or more.
+
 ## Data Visualization
 
 ## LINE Assumption
