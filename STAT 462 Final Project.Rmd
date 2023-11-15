@@ -76,11 +76,11 @@ The statistic table presents some of the basic statistic summaries for each quan
 plot(data)
 ```
 
-## LINE Assumption
-
 # Model Building
 
 ## Multiple Linear Regression
+
+## LINE Assumption
 
 ## KNN Regression
 
