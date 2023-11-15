@@ -11,6 +11,8 @@ library(tidyverse)
 library(ggplot2)
 library(janitor)
 library(kableExtra)
+library(randomForest)
+library(caret)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
@@ -42,7 +44,11 @@ dummy_data <- data %>%
   select(-sex, -smoker, -region)
 
 # Create standardized dataset for ML that requires scaling
-scaled_data <- scale(dummy_data)
+xvars <- names(dummy_data)
+scaled_data <- dummy_data
+scaled_data[ , xvars] <- scale(scaled_data[ , xvars],
+                            center = TRUE,
+                            scale = TRUE)
 ```
 
 ## Data Statistics
@@ -66,9 +72,20 @@ summary_stat %>%
   ) 
 ```
 
+The statistic table presents some of the basic statistic summaries for each quantitative variables. Including the number of records, mean, standard deviation, minimum, maximum, range, and standard error of the corresponding variable. Some interesting finding including the average of BMI, as the average BMI category of the dataset is classified as obesity, this suggested that most people probably are classified as overweight or more.
+
 ## Data Visualization
 
 # Model Building
+```{r}
+# Doing a 8/2 training, testing splits
+set.seed(123)
+train_ind <- sample(1:nrow(scaled_data), floor(0.8*nrow(scaled_data)))
+set.seed(NULL)
+
+train <- scaled_data[train_ind, ]
+test <- scaled_data[-train_ind, ]
+```
 
 ## Multiple Linear Regression
 
@@ -96,9 +113,16 @@ shapiro.test(lm_fullModel$residuals)
 
 Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
-## KNN Regression
-
 ## Random Forest
+```{r}
+rf <- randomForest(charges ~ ., data = train, ntree = 500, mtry = 3)
+
+# Create a vector of prediction probability 
+pred_rf <- predict(rf, newdata = test)
+
+# Calculate RSS
+RSS_rf <- exp(sum(test$charges - pred_rf)^2)
+```
 
 # Model Comparison
 
@@ -107,5 +131,9 @@ Based on the Shapiro-Wilk test, the data is not normally distributed. However, d
 # Conclusion
 
 # Code Appendix 
+```{r}
+#| ref.label = knitr::all_labels(),
+#| echo = TRUE,
+#| eval = FALSE
 
-
+```
