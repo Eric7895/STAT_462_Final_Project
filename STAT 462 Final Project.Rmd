@@ -18,7 +18,7 @@ data <- read.csv("insurance.csv")
 
 # Group Memeber
 
-Eric Wu
+Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
 
 # Background
 
