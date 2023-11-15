@@ -87,5 +87,11 @@ The statistic table presents some of the basic statistic summaries for each quan
 # Conclusion
 
 # Code Appendix 
+```{r}
+#| ref.label = knitr::all_labels(),
+#| echo = TRUE,
+#| eval = FALSE
+
+```
 
 
