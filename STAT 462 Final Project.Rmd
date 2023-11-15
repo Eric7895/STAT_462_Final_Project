@@ -9,8 +9,9 @@ knitr::opts_chunk$set(echo = FALSE)
 # Load necessary Libraries
 library(tidyverse)
 library(ggplot2)
-library(janitor)
-library(kableExtra)
+#library(janitor)
+#library(kableExtra)
+library(esquisse)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
@@ -69,6 +70,11 @@ summary_stat %>%
 The statistic table presents some of the basic statistic summaries for each quantitative variables. Including the number of records, mean, standard deviation, minimum, maximum, range, and standard error of the corresponding variable. Some interesting finding including the average of BMI, as the average BMI category of the dataset is classified as obesity, this suggested that most people probably are classified as overweight or more.
 
 ## Data Visualization
+
+```{r}
+# These plots are used to visualize the correlation between the plotted variables.
+plot(data)
+```
 
 ## LINE Assumption
 
