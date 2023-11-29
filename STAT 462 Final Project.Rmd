@@ -104,7 +104,15 @@ MSE_mlr <- mean((test$charges - pred_mlr)^2)
 
 # Displaying the MSE
 print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
+```
 
+## LINE Assumption
+
+The basic assumptions for a linear regression are: Linearity, Independence, Normality, and Equivariance. If any of these assumptions are violated, there are two concerns: incorrect conclusions and interpretations, or a lack of power for discovery.
+
+We analyze these assumptions by using diagnostic plots on our full model.
+
+```{r}
 # Diagnostic plot - Residuals vs Fitted values
 plot(mlr_model$fitted.values, mlr_model$residuals)
 abline(h = 0, col = "red")
@@ -112,7 +120,12 @@ abline(h = 0, col = "red")
 # Diagnostic plot - QQ plot for residuals
 qqnorm(mlr_model$residuals)
 qqline(mlr_model$residuals, col = "red")
+
+# Shapiro - Wilk Test for normality
+shapiro.test(lm_fullModel$residuals)
 ```
+
+Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
 ```{r}
 # Check for multicollinearity using Variance Inflation Factor (VIF)
@@ -124,30 +137,6 @@ print(alias(mlr_model_1))
 # Calculate VIF
 vif(mlr_model_1)
 ```
-
-## LINE Assumption
-
-The basic assumptions for a linear regression are: Linearity, Independence, Normality, and Equivariance. If any of these assumptions are violated, there are two concerns: incorrect conclusions and interpretations, or a lack of power for discovery.
-
-We analyze these assumptions by using diagnostic plots on our full model.
-
-```{r}
-# Full linear model using bmi as response
-lm_fullModel<-lm(dummy_data$charges~., data=train)
-summary(lm_fullModel)
-
-# Residuals against fitted values plot
-plot(lm_fullModel$fitted.values, lm_fullModel$residuals)
-
-# QQ Test for normality
-qqnorm(lm_fullModel$residuals)
-qqline(lm_fullModel$residuals)
-
-# Shapiro - Wilk Test for normality
-shapiro.test(lm_fullModel$residuals)
-```
-
-Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
 ## LASSO Regression
 ```{r}
