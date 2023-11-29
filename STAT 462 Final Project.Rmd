@@ -84,18 +84,20 @@ set.seed(NULL)
 
 train <- dummy_data[train_ind, ]
 test <- dummy_data[-train_ind, ]
+scaled_train <- scaled_data[train_ind, ]
+scaled_test <- scaled_data[-train_ind, ]
 ```
 
 ## Multiple Linear Regression
 ```{r}
 # Building the Multiple Linear Regression model
-mlr_model <- lm(charges ~ ., data = train)
+mlr_model <- lm(charges ~ ., data = scaled_train)
 
 # Viewing the summary of the model
 summary(mlr_model)
 
 # Predicting with the test data
-pred_mlr <- predict(mlr_model, newdata = test)
+pred_mlr <- predict(mlr_model, newdata = scaled_test)
 
 # Calculating Mean Squared Error (MSE) for the test set
 MSE_mlr <- mean((test$charges - pred_mlr)^2)
