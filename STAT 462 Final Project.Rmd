@@ -1,0 +1,139 @@
+---
+title: "STAT 462 Final Project"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# Load necessary Libraries
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(kableExtra)
+library(randomForest)
+library(caret)
+
+# Load Dataset 
+data <- read.csv("insurance.csv")
+```
+
+# Group Memeber
+
+Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
+
+# Background
+
+The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI, how many children, Smoker or not, and which region in the U.S they lived. The goal of the project is to compare multiple ML method including multiple linear regression in order to find the best model with the lowest MSE value. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
+
+# Exploratory Data Analysis
+```{r}
+# Check for Null Value
+na <- sum(is.na(data))
+
+# Create dummy variable
+dummy_data <- data %>%
+  mutate(
+    is_male = if_else(sex == "male", 1, 0),
+    is_smoker = if_else(smoker == "yes", 1, 0),
+    is_southwest = if_else(region == "southwest", 1, 0),
+    is_southeast = if_else(region == "southeast", 1, 0),
+    is_northwest = if_else(region == "northwest", 1, 0),
+    is_northeast = if_else(region == "northeast", 1, 0)
+  ) %>%
+  select(-sex, -smoker, -region)
+
+# Create standardized dataset for ML that requires scaling
+xvars <- names(dummy_data)
+scaled_data <- dummy_data
+scaled_data[ , xvars] <- scale(scaled_data[ , xvars],
+                            center = TRUE,
+                            scale = TRUE)
+```
+
+## Data Statistics
+```{r}
+# Create a basic statistic table using the quantitative variables of the dataset.
+quant <- c("age", "bmi", "children", "charges")
+
+summary_stat <- psych::describe(data[quant], skew = FALSE) %>%
+  round(2)
+
+summary_stat %>%
+  kable(
+    caption = 'Basic statistics of quantitative variables',
+    booktabs = TRUE,
+    align = c('l', rep('c', 8))
+  ) %>%
+  kableExtra::kable_styling(
+    bootstrap_options = c('striped', 'condensed'),
+    font_size = 10,
+    latex_options = "hold_position"
+  ) 
+```
+
+The statistic table presents some of the basic statistic summaries for each quantitative variables. Including the number of records, mean, standard deviation, minimum, maximum, range, and standard error of the corresponding variable. Some interesting finding including the average of BMI, as the average BMI category of the dataset is classified as obesity, this suggested that most people probably are classified as overweight or more.
+
+## Data Visualization
+
+# Model Building
+```{r}
+# Doing a 8/2 training, testing splits
+set.seed(123)
+train_ind <- sample(1:nrow(scaled_data), floor(0.8*nrow(scaled_data)))
+set.seed(NULL)
+
+train <- scaled_data[train_ind, ]
+test <- scaled_data[-train_ind, ]
+```
+
+## Multiple Linear Regression
+
+## LINE Assumption
+
+The basic assumptions for a linear regression are: Linearity, Independence, Normality, and Equivariance. If any of these assumptions are violated, there are two concerns: incorrect conclusions and interpretations, or a lack of power for discovery.
+
+We analyze these assumptions by using diagnostic plots on our full model.
+
+```{r}
+# Full linear model using bmi as response
+lm_fullModel<-lm(dummy_data$bmi~., data=dummy_data)
+summary(lm_fullModel)
+
+# Residuals against fitted values plot
+plot(lm_fullModel$fitted.values, lm_fullModel$residuals)
+
+# QQ Test for normality
+qqnorm(lm_fullModel$residuals)
+qqline(lm_fullModel$residuals)
+
+# Shapiro - Wilk Test for normality
+shapiro.test(lm_fullModel$residuals)
+```
+
+Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
+
+## Random Forest
+```{r}
+rf <- randomForest(charges ~ ., data = train, ntree = 500, mtry = 3)
+
+# Create a vector of prediction probability 
+pred_rf <- predict(rf, newdata = test)
+
+# Calculate RSS
+RSS_rf <- exp(sum(test$charges - pred_rf)^2)
+```
+
+# Model Comparison
+
+# Discussion
+
+# Conclusion
+
+# Code Appendix 
+```{r}
+#| ref.label = knitr::all_labels(),
+#| echo = TRUE,
+#| eval = FALSE
+
+```
