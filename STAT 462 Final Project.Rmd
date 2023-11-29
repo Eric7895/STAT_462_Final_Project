@@ -23,7 +23,7 @@ Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
 
 # Background
 
-The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI, how many children, Smoker or not, and which region in the U.S they lived. The goal of the project is to compare multiple ML method including multiple linear regression in order to find the best model with the lowest MSE value. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
+The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI in the United States. The goal of the project is to examine how many children, Smoker or not, and which region in the U.S they lived. The methods of the project are conduct hypothesis tests to determine the difference between sample data that are caused by the sampling error, and compare multiple ML method including multiple linear regression in order to find the best model with the lowest MSE value. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
 
 # Exploratory Data Analysis
 ```{r}
@@ -87,6 +87,41 @@ test <- dummy_data[-train_ind, ]
 ```
 
 ## Multiple Linear Regression
+```{r}
+# Building the Multiple Linear Regression model
+mlr_model <- lm(charges ~ ., data = train)
+
+# Viewing the summary of the model
+summary(mlr_model)
+
+# Predicting with the test data
+pred_mlr <- predict(mlr_model, newdata = test)
+
+# Calculating Mean Squared Error (MSE) for the test set
+MSE_mlr <- mean((test$charges - pred_mlr)^2)
+
+# Displaying the MSE
+print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
+
+# Diagnostic plot - Residuals vs Fitted values
+plot(mlr_model$fitted.values, mlr_model$residuals)
+abline(h = 0, col = "red")
+
+# Diagnostic plot - QQ plot for residuals
+qqnorm(mlr_model$residuals)
+qqline(mlr_model$residuals, col = "red")
+```
+
+```{r}
+# Check for multicollinearity using Variance Inflation Factor (VIF)
+mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
+
+# Using alias to check for the coefficients
+print(alias(mlr_model_1))
+
+# Calculate VIF
+vif(mlr_model_1)
+```
 
 ## LINE Assumption
 
