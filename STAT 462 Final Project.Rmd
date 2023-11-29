@@ -11,8 +11,7 @@ library(tidyverse)
 library(ggplot2)
 library(janitor)
 library(kableExtra)
-library(randomForest)
-library(caret)
+library(glmnet)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
@@ -80,11 +79,11 @@ The statistic table presents some of the basic statistic summaries for each quan
 ```{r}
 # Doing a 8/2 training, testing splits
 set.seed(123)
-train_ind <- sample(1:nrow(scaled_data), floor(0.8*nrow(scaled_data)))
+train_ind <- sample(1:nrow(dummy_data), floor(0.8*nrow(dummy_data)))
 set.seed(NULL)
 
-train <- scaled_data[train_ind, ]
-test <- scaled_data[-train_ind, ]
+train <- dummy_data[train_ind, ]
+test <- dummy_data[-train_ind, ]
 ```
 
 ## Multiple Linear Regression
@@ -97,7 +96,7 @@ We analyze these assumptions by using diagnostic plots on our full model.
 
 ```{r}
 # Full linear model using bmi as response
-lm_fullModel<-lm(dummy_data$bmi~., data=dummy_data)
+lm_fullModel<-lm(dummy_data$charges~., data=train)
 summary(lm_fullModel)
 
 # Residuals against fitted values plot
@@ -113,7 +112,7 @@ shapiro.test(lm_fullModel$residuals)
 
 Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
-## Random Forest
+## LASSO Regression
 ```{r}
 rf <- randomForest(charges ~ ., data = train, ntree = 500, mtry = 3)
 
@@ -122,6 +121,45 @@ pred_rf <- predict(rf, newdata = test)
 
 # Calculate RSS
 RSS_rf <- exp(sum(test$charges - pred_rf)^2)
+```
+
+```{r}
+Xmat <- model.matrix(charges ~ . , data=scaled_data)[ ,-1]
+y <- data$charges
+```
+
+```{r}
+set.seed(123)
+train_ind <- sample(1:nrow(Xmat), floor(0.8*nrow(Xmat)))
+set.seed(NULL)
+
+X_mat_train <- Xmat[train_ind,]
+X_mat_test <- Xmat[-train_ind,]
+y_train <- y[train_ind]
+y_test <- y[-train_ind]
+```
+
+```{r}
+set.seed (123)
+cv.out <- cv.glmnet(x= X_mat_train, y = y_train, 
+                    alpha = 1, standardize = TRUE,
+                    nfolds=10)
+plot(cv.out)
+```
+
+```{r}
+bestlam <- cv.out$lambda.min
+pred_lasso <- predict(cv.out, s = bestlam,
+                      newx = X_mat_test)
+coef_lasso <- predict(cv.out, s = bestlam,
+                     type = "coefficients")
+
+RSS_lasso <- mean((y_test - pred_lasso)^2)
+RSS_lasso
+```
+
+```{r}
+coef_lasso
 ```
 
 # Model Comparison
