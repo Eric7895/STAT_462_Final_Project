@@ -142,6 +142,57 @@ MSE_mlr <- mean((scaled_test$charges - pred_mlr)^2)
 print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
 ```
 
+```{r}
+# Diagnostic plot - Residuals vs Fitted values
+plot(mlr_model$fitted.values, mlr_model$residuals)
+abline(h = 0, col = "red")
+# Diagnostic plot - QQ plot for residuals
+qqnorm(mlr_model$residuals)
+qqline(mlr_model$residuals, col = "red")
+```
+```{r}
+# Check for multicollinearity using Variance Inflation Factor (VIF)
+mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
+# Using alias to check for the coefficients
+print(alias(mlr_model_1))
+# Calculate VIF
+vif(mlr_model_1)
+```
+
+***Model Summary:***
+
+The model explains a significant amount of variance in the charges, with an R-squared value of 0.7533. This indicates that approximately 75.33% of the variability in charges can be explained by the model.   
+The Adjusted R-squared value is 0.7514, which adjusts for the number of predictors in the model and suggests that the model fits the data well.    
+The F-statistic is highly significant (p < 2.2e-16), indicating that the model as a whole is statistically significant.  
+
+<br>
+
+***Coefficients:***   
+
+age, bmi, children, and is_smoker are significant predictors of charges, with p-values less than 0.05.
+age has a coefficient of 0.282, suggesting that each additional year of age is associated with an increase in charges by a factor of 0.282, holding other variables constant.   
+bmi is also a significant predictor, with each unit increase in BMI associated with an increase in charges by a factor of 0.178.
+children has a positive coefficient (0.0557), indicating that having more children is associated with higher charges.   
+is_smoker has the largest coefficient of 0.8058, which means being a smoker is associated with a substantial increase in charges. The variables is_male, is_southwest, is_southeast, and is_northwest are not statistically significant at the 0.05 level.    
+However, is_southwest has a p-value close to the significance level, which may warrant further investigation.   
+The is_northeast variable is not defined due to singularities, likely due to it being perfectly collinear with the other region variables. This is often handled by omitting one category of a categorical variable to serve as a baseline.   
+
+<br>
+
+***Residual Analysis:***   
+
+The Residuals vs Fitted plot shows a random scatter of residuals, which is good as it suggests that the variance of the residuals is constant (homoscedasticity). However, there seems to be a slight pattern with the residuals fanning out for larger fitted values, which could indicate potential issues with non-constant variance.   
+The Normal Q-Q Plot shows that the residuals deviate from the line at the two ends, indicating that the residuals may not be normally distributed. This could affect the model's confidence intervals and hypothesis tests.  
+
+<br>
+
+***Other Analysis:***  
+
+Key variables like age and smoking status are strong predictors of charges.   
+The Mean Squared Error (MSE) for the model is 0.2265, which is relatively low and indicates good predictive performance.    
+
+<br>
+
 ## LINE Assumption
 
 The basic assumptions for a linear regression are: Linearity, Independence, Normality, and Equivariance. If any of these assumptions are violated, there are two concerns: incorrect conclusions and interpretations, or a lack of power for discovery.
