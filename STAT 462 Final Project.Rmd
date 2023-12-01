@@ -23,7 +23,7 @@ Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
 
 # Background
 
-The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI in the United States. The goal of the project is to examine how many children, Smoker or not, and which region in the U.S they lived. The methods of the project are conduct hypothesis tests to determine the difference between sample data that are caused by the sampling error, and compare multiple ML method including multiple linear regression in order to find the best model with the lowest MSE value. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
+The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI in the United States. The goal of the project is to examine how many children, Smoker or not, and which region in the U.S they lived. The methods of the project are using multiple linear regression to find the best model with the lowest MSE value and use LASSO regression to make the comparison. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
 
 # Exploratory Data Analysis
 ```{r}
