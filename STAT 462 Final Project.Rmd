@@ -78,6 +78,7 @@ The statistic table presents some of the basic statistic summaries for each quan
 plot(data)
 # These plots display the relationships between each of the variables in the dataset.
 ```
+
 ```{r}
 esquisse::esquisser(data)
 ggplot(data) +
