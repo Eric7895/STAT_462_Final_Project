@@ -76,40 +76,49 @@ The statistic table presents some of the basic statistic summaries for each quan
 ## Data Visualization
 ```{r}
 plot(data)
-# These plots display the relationships between each of the variables in the dataset.
 ```
+
+These plots display the relationships between each of the variables in the dataset.
+
 ```{r}
 esquisse::esquisser(data)
 ggplot(data) +
   aes(x = sex, y = bmi) +
   geom_boxplot(fill = "#112446") +
   theme_minimal()
-# These boxplots display the relationship between the variables sex and BMI. There are a few outliers for each, but they are not significantly far from the rest of the data. The average male BMI is slightly higher than the average female BMI. 
 ```
+
+These boxplots display the relationship between the variables sex and BMI. There are a few outliers for each, but they are not significantly far from the rest of the data. The average male BMI is slightly higher than the average female BMI. 
+
 ```{r}
 esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = smoker) +
   geom_boxplot(fill = "#112446") +
   theme_minimal()
-# These boxplots show the relationship between the variables age and smoker. The average age of smokers is slightly lower than the average age of non-smokers.There are no outliers visible on the plot.
 ```
+
+These boxplots show the relationship between the variables age and smoker. The average age of smokers is slightly lower than the average age of non-smokers.There are no outliers visible on the plot.
+
 ```{r}
 esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = bmi) +
   geom_jitter(size = 0.5) +
   theme_minimal()
-# This plot shows the distribution of the variables BMI and age. The data appear very random and evenly distributed across the plot. There is considerable variation in the datapoints. 
 ```
+
+This plot shows the distribution of the variables BMI and age. The data appear very random and evenly distributed across the plot. There is considerable variation in the datapoints.
+
 ```{r}
 esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = children) +
   geom_point(shape = "circle", size = 1.5, colour = "#112446") +
   theme_minimal()
-# This plot shows the relationship between age and amount of children. Most of the data is concentrated between 0 to 3 children across the whole spectrum of ages. 
 ```
+
+This plot shows the relationship between age and amount of children. Most of the data is concentrated between 0 to 3 children across the whole spectrum of ages. 
 
 # Model Building
 ```{r}
