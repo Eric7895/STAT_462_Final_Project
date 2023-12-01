@@ -7,11 +7,11 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 # Load necessary Libraries
-library(tidyverse)
-library(ggplot2)
-library(janitor)
-library(kableExtra)
-library(glmnet)
+#library(tidyverse)
+#library(ggplot2)
+#library(janitor)
+#library(kableExtra)
+#library(glmnet)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
@@ -147,6 +147,26 @@ We analyze these assumptions by using diagnostic plots on our full model.
 # Diagnostic plot - Residuals vs Fitted values
 plot(mlr_model$fitted.values, mlr_model$residuals)
 abline(h = 0, col = "red")
+
+# Scatter plot with studentized deleted residuals
+h <- hatvalues(mlr_model)
+sum <- summary(mlr_model)
+sig2hat <- sum$sigma^2
+r <- mlr_model$residuals/sqrt(sig2hat*(1-h))
+n <- 1338
+p <- 7
+t <- r*((n-p-1)/(n-p-r^2))^(1/2)
+plot(h, t)
+
+# Large leverage points
+plot(h,xlab='Observation',ylab='Leverage',main='Leverage')
+abline(h=2*p/n,lty=2,col="red")
+abline(h=3*p/n,lty=2,col="blue")
+
+# Cook's distance
+D = (1/p)*r^2*h/(1-h)
+plot(h,D)
+plot(mlr_model, which=5)
 
 # Diagnostic plot - QQ plot for residuals
 qqnorm(mlr_model$residuals)
