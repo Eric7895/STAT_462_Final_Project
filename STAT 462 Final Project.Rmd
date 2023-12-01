@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE)
 data <- read.csv("insurance.csv")
 ```
 
-# Group Memeber
+# Group Members
 
 Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
 
