@@ -136,7 +136,7 @@ summary(mlr_model)
 pred_mlr <- predict(mlr_model, newdata = scaled_test)
 
 # Calculating Mean Squared Error (MSE) for the test set
-MSE_mlr <- mean((test$charges - pred_mlr)^2)
+MSE_mlr <- mean((scaled_test$charges - pred_mlr)^2)
 
 # Displaying the MSE
 print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
@@ -175,19 +175,10 @@ vif(mlr_model_1)
 ```
 
 ## LASSO Regression
-```{r}
-rf <- randomForest(charges ~ ., data = train, ntree = 500, mtry = 3)
-
-# Create a vector of prediction probability 
-pred_rf <- predict(rf, newdata = test)
-
-# Calculate RSS
-RSS_rf <- exp(sum(test$charges - pred_rf)^2)
-```
 
 ```{r}
 Xmat <- model.matrix(charges ~ . , data=scaled_data)[ ,-1]
-y <- data$charges
+y <- scaled_data$charges
 ```
 
 ```{r}
