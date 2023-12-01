@@ -298,7 +298,7 @@ coef_lasso
 # Model Comparison
 
 # Discussion
-Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of BMI stratified by sex show that males have a higher BMI than females on average. The relationship between the variables BMI and age were also plotted in a scatterplot. There is no visible pattern or correlation in the data. The points are random and evenly distributed. 
+Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of smokers stratified by age show that the average age of smokers is slightly lower than that of non-smokers. The relationship between the variables age and children were also plotted in a scatterplot. There is no visible pattern or correlation in the data. Most of the data is concentrated between 0 and 3 children across all ages. The points are random and evenly distributed. 
 
 # Conclusion
 
