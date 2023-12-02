@@ -170,8 +170,8 @@ vif(mlr_model_1)
 
 ***Model Summary:***
 
-The model explains a significant amount of variance in the charges, with an R-squared value of 0.7533. This indicates that approximately 75.33% of the variability in charges can be explained by the model.   
-The Adjusted R-squared value is 0.7514, which adjusts for the number of predictors in the model and suggests that the model fits the data well.    
+The model explains a significant amount of variance in the charges, with an R-squared value of 0.7533. This indicates that approximately 75.33% of the variability can be explained by the model.   
+The Adjusted R-squared value is 0.7514, which suggests that the model fits the data well.    
 The F-statistic is highly significant (p < 2.2e-16), indicating that the model as a whole is statistically significant.  
 
 <br>
@@ -184,7 +184,7 @@ bmi is also a significant predictor, with each unit increase in BMI associated w
 children has a positive coefficient (0.0557), indicating that having more children is associated with higher charges.   
 is_smoker has the largest coefficient of 0.8058, which means being a smoker is associated with a substantial increase in charges. The variables is_male, is_southwest, is_southeast, and is_northwest are not statistically significant at the 0.05 level.    
 However, is_southwest has a p-value close to the significance level, which may warrant further investigation.   
-The is_northeast variable is not defined due to singularities, likely due to it being perfectly collinear with the other region variables. This is often handled by omitting one category of a categorical variable to serve as a baseline.   
+The is_northeast variable is not defined due to singularities, likely due to it being perfectly collinear with the other region variables.  
 
 <br>
 
