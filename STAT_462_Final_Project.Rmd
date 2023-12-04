@@ -7,12 +7,12 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 # Load necessary Libraries
-#library(tidyverse)
-#library(ggplot2)
-#library(janitor)
-#library(kableExtra)
-#library(glmnet)
-#library(faraway)
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(kableExtra)
+library(glmnet)
+library(faraway)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
@@ -29,7 +29,7 @@ The Insurance dataset extracted from Kaggle.com describes the medical costs for 
 The dataset come from [here](https://www.kaggle.com/datasets/joebeachcapital/medical-insurance-costs/data)
 
 # Exploratory Data Analysis
-```{r}
+```{r warning=FALSE, message=FALSE}
 # Check for Null Value
 na <- sum(is.na(data))
 
@@ -51,6 +51,12 @@ scaled_data <- dummy_data
 scaled_data[ , xvars] <- scale(scaled_data[ , xvars],
                             center = TRUE,
                             scale = TRUE)
+
+scaled_data <- scale(dummy_data, center = TRUE, scale = TRUE)
+scaleList <- list(scale = attr(scaled_data, "scaled:scale"),
+                  center = attr(scaled_data, "scaled:center"))
+
+scaled_data <- as.data.frame(scaled_data)
 ```
 
 ## Data Statistics
@@ -84,7 +90,6 @@ plot(data)
 These plots display the relationships between each of the variables in the dataset.
 
 ```{r}
-esquisse::esquisser(data)
 ggplot(data) +
   aes(x = sex, y = bmi) +
   geom_boxplot(fill = "#112446") +
@@ -94,7 +99,6 @@ ggplot(data) +
 These boxplots display the relationship between the variables sex and BMI. There are a few outliers for each, but they are not significantly far from the rest of the data. The average male BMI is slightly higher than the average female BMI. 
 
 ```{r}
-esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = smoker) +
   geom_boxplot(fill = "#112446") +
@@ -104,7 +108,6 @@ ggplot(data) +
 These boxplots show the relationship between the variables age and smoker. The average age of smokers is slightly lower than the average age of non-smokers.There are no outliers visible on the plot.
 
 ```{r}
-esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = bmi) +
   geom_jitter(size = 0.5) +
@@ -114,7 +117,6 @@ ggplot(data) +
 This plot shows the distribution of the variables BMI and age. The data appear very random and evenly distributed across the plot. There is considerable variation in the datapoints.
 
 ```{r}
-esquisse::esquisser(data)
 ggplot(data) +
   aes(x = age, y = children) +
   geom_point(shape = "circle", size = 1.5, colour = "#112446") +
@@ -148,7 +150,10 @@ summary(mlr_model)
 pred_mlr <- predict(mlr_model, newdata = scaled_test)
 
 # Calculating Mean Squared Error (MSE) for the test set
-MSE_mlr <- mean((scaled_test$charges - pred_mlr)^2)
+actual <- scaled_test$charges * scaleList$scale["charges"] + scaleList$center["charges"]
+pred <- pred_mlr * scaleList$scale["charges"] + scaleList$center["charges"]
+
+MSE_mlr <- mean((actual - pred)^2)
 
 # Displaying the MSE
 print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
@@ -162,6 +167,7 @@ abline(h = 0, col = "red")
 qqnorm(mlr_model$residuals)
 qqline(mlr_model$residuals, col = "red")
 ```
+
 ```{r}
 # Check for multicollinearity using Variance Inflation Factor (VIF)
 mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
@@ -241,7 +247,7 @@ qqnorm(mlr_model$residuals)
 qqline(mlr_model$residuals, col = "red")
 
 # Shapiro - Wilk Test for normality
-shapiro.test(lm_fullModel$residuals)
+shapiro.test(mlr_model$residuals)
 ```
 
 Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
@@ -290,7 +296,10 @@ pred_lasso <- predict(cv.out, s = bestlam,
 coef_lasso <- predict(cv.out, s = bestlam,
                      type = "coefficients")
 
-RSS_lasso <- mean((y_test - pred_lasso)^2)
+#actual <- scaled_test$charges * scaleList$scale["charges"] + scaleList$center["charges"]
+pred <- pred_lasso * scaleList$scale["charges"] + scaleList$center["charges"]
+
+RSS_lasso <- mean((actual - pred)^2)
 RSS_lasso
 ```
 
