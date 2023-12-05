@@ -204,22 +204,42 @@ We analyze these assumptions by using diagnostic plots on our full model.
 ```{r}
 # Diagnostic plot - Residuals vs Fitted values
 plot(mlr_model$fitted.values, mlr_model$residuals)
-abline(h = 0, col = "red")
+abline(lm(mlr_model$residuals ~ mlr_model$fitted.values), col="red")
+```
 
+By analyzing the residuals vs fitted values plot, it can be determined that there is relative equivariance between data points, given the line of best fit going through all these points has a slope of zero.
+
+```{r}
 # Large leverage points
+h <- hatvalues(mlr_model)
+sum <- summary(mlr_model)
+sig2hat <- sum$sigma^2
+r <- mlr_model$residuals/sqrt(sig2hat*(1-h))
 plot(h,xlab='Observation',ylab='Leverage',main='Leverage')
 abline(h=2*p/n,lty=2,col="red")
 abline(h=3*p/n,lty=2,col="blue")
+```
 
+By doing a test to see if we have any points with large leverage, we received results that indicate no points have large leverage in the model.
+
+```{r}
 # Cook's distance
 D = (1/p)*r^2*h/(1-h)
 plot(h,D)
 plot(mlr_model, which=5)
+```
 
+Based on the results for the Cook's distance tests, there appears to be no data points that have a Cook's Distance greater than 1. Therefore, there are no outliers in the dataset. 
+
+```{r}
 # Diagnostic plot - QQ plot for residuals
 qqnorm(mlr_model$residuals)
 qqline(mlr_model$residuals, col = "red")
+```
 
+Based on the QQ plot for residuals, the majority of the data is along the line for normality, but there is a significant amount away from the line. This would suggest non-normality within the data, however using the central limit theorem and having 1338 observations we are able to ignore this on the plot and assume the data is normal.
+
+```{r}
 # Shapiro - Wilk Test for normality
 shapiro.test(mlr_model$residuals)
 ```
@@ -227,15 +247,31 @@ shapiro.test(mlr_model$residuals)
 Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably use the central limit theorem. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
 ```{r}
-# Check for multicollinearity using Variance Inflation Factor (VIF)
-mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
-
-# Using alias to check for the coefficients
-print(alias(mlr_model_1))
-
 # Calculate VIF
-vif(mlr_model)
+vif(lm(charges~., data = data))
 ```
+
+## Adjusting the Model
+
+```{r}
+# Adjusting the model
+adj_model <- lm(charges~age+bmi+children+is_smoker, data = scaled_train)
+summary(adj_model)
+
+# Predicting with the test data
+pred_adj_model <- predict(adj_model, newdata = scaled_test)
+
+# Calculating Mean Squared Error (MSE) for the test set
+pred <- pred_adj_model * scaleList$scale["charges"] + scaleList$center["charges"]
+
+MSE_mlr <- mean((actual - pred)^2)
+RMSE_mlr <- round(sqrt(MSE_mlr), 2)
+
+# Displaying the MSE
+print(paste("RMSE for Multiple Linear Regression: ", RMSE_mlr))
+```
+
+This is the result of the adjusted model only using significant predictors compared to the full model where the estimates are not that different from the full model.
 
 ## LASSO Regression
 
@@ -286,7 +322,10 @@ coef_lasso
 # Discussion
 Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of smokers stratified by age show that the average age of smokers is slightly lower than that of non-smokers. The relationship between the variables age and children were also plotted in a scatterplot. There is no visible pattern or correlation in the data. Most of the data is concentrated between 0 and 3 children across all ages. The points are random and evenly distributed. 
 
+Further improvements could be made to the model by using AIC or BIC to complete forward or backward selection of certain predictors. However, using the most significant, we were able to obtain a sufficient model. Furthermore, there are anomalies in the data for the LINE assumptions, but since there are so many observations in our dataset, we are able to ignore them by CLT, but they should be taken into account later.
+
 # Conclusion
+
 
 # Code Appendix 
 ```{r}
