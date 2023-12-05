@@ -7,11 +7,12 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 # Load necessary Libraries
-#library(tidyverse)
-#library(ggplot2)
-#library(janitor)
-#library(kableExtra)
-#library(glmnet)
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(kableExtra)
+library(glmnet)
+library(psych)
 
 # Load Dataset 
 data <- read.csv("insurance.csv")
