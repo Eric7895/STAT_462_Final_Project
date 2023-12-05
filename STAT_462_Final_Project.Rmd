@@ -154,9 +154,10 @@ actual <- scaled_test$charges * scaleList$scale["charges"] + scaleList$center["c
 pred <- pred_mlr * scaleList$scale["charges"] + scaleList$center["charges"]
 
 MSE_mlr <- mean((actual - pred)^2)
+RMSE_mlr <- round(sqrt(MSE_mlr), 2)
 
 # Displaying the MSE
-print(paste("MSE for Multiple Linear Regression: ", MSE_mlr))
+print(paste("RMSE for Multiple Linear Regression: ", RMSE_mlr))
 ```
 
 ```{r}
