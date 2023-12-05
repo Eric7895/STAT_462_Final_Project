@@ -27,7 +27,7 @@ Eric Wu, Derek Avery, Allison Schaedler, Xinyi Bao
 
 The Insurance dataset extracted from Kaggle.com describes the medical costs for over 1300 individuals based on their age, sex, BMI in the United States. The goal of the project is to examine how many children, Smoker or not, and which region in the U.S they lived. The methods of the project are using multiple linear regression to find the best model with the lowest MSE value and use LASSO regression to make the comparison. In addition, there will be a detail diagnostic on the linear regression model for the assumptions, outliers, and other possible issues. 
 
-The dataset come from [here](https://www.kaggle.com/datasets/joebeachcapital/medical-insurance-costs/data)
+The dataset come from https://www.kaggle.com/datasets/joebeachcapital/medical-insurance-costs/data
 
 # Exploratory Data Analysis
 ```{r warning=FALSE, message=FALSE}
@@ -213,6 +213,8 @@ By analyzing the residuals vs fitted values plot, it can be determined that ther
 # Large leverage points
 h <- hatvalues(mlr_model)
 sum <- summary(mlr_model)
+p <- 12
+n <- 1338
 sig2hat <- sum$sigma^2
 r <- mlr_model$residuals/sqrt(sig2hat*(1-h))
 plot(h,xlab='Observation',ylab='Leverage',main='Leverage')
@@ -220,7 +222,7 @@ abline(h=2*p/n,lty=2,col="red")
 abline(h=3*p/n,lty=2,col="blue")
 ```
 
-By doing a test to see if we have any points with large leverage, we received results that indicate no points have large leverage in the model.
+By doing a test to see if we have any points with large leverage, we received results that indicate some points have large leverage in the model.
 
 ```{r}
 # Cook's distance
@@ -251,6 +253,8 @@ Based on the Shapiro-Wilk test, the data is not normally distributed. However, d
 vif(lm(charges~., data = data))
 ```
 
+Based on the result from the VIF function, our model is free from collinearity issues. 
+
 ## Adjusting the Model
 
 ```{r}
@@ -275,8 +279,10 @@ This is the result of the adjusted model only using significant predictors compa
 
 ## LASSO Regression
 
+We decided to implement another model so we can compare the adjusted model to a different model.
+
 ```{r}
-Xmat <- model.matrix(charges ~ . , data=scaled_data)[ ,-1]
+Xmat <- model.matrix(charges ~ ., data=scaled_data)[ ,-1]
 y <- scaled_data$charges
 ```
 
@@ -299,6 +305,8 @@ cv.out <- cv.glmnet(x= X_mat_train, y = y_train,
 plot(cv.out)
 ```
 
+Above is the graph demonstrate the relationship betten the MSE and the choice of lambda. Based on the graph, we will continue with the lambda that produce the least MSE.
+
 ```{r}
 bestlam <- cv.out$lambda.min
 pred_lasso <- predict(cv.out, s = bestlam,
@@ -309,23 +317,26 @@ coef_lasso <- predict(cv.out, s = bestlam,
 #actual <- scaled_test$charges * scaleList$scale["charges"] + scaleList$center["charges"]
 pred <- pred_lasso * scaleList$scale["charges"] + scaleList$center["charges"]
 
-RSS_lasso <- mean((actual - pred)^2)
-RSS_lasso
+MSE_lasso <- mean((actual - pred)^2)
+RMSE_lasso <- sqrt(MSE_lasso)
 ```
-
 ```{r}
 coef_lasso
 ```
+Above is the coefficient estimates for our lasso regression model, our lasso regression model utilized the entire dataset because one of the important properties of lasso regression is it's ability to do feature selections. Based on the coefficient estimates, we can tell that the variable "is_male", "is_southeast", and "is_northwest" shrinkage to zero as they are not important. The final RMSE value for our lasso regression is `r RMSE_lasso` which is lower than the RMSE of the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. 
 
 # Model Comparison
 
-# Discussion
-Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of smokers stratified by age show that the average age of smokers is slightly lower than that of non-smokers. The relationship between the variables age and children were also plotted in a scatterplot. There is no visible pattern or correlation in the data. Most of the data is concentrated between 0 and 3 children across all ages. The points are random and evenly distributed. 
+Despite having the ability to perform feature selection, the lasso regression model only outperforms the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. We can only concluded that the lasso regression model, unlike our anticipation, is not suitable for the insurance dataset. On the other hand, the adjusted model actually performed worse than the full model, indicating the possibility that the coefficient estimates of the insignificant variables might not be zero.  
 
-Further improvements could be made to the model by using AIC or BIC to complete forward or backward selection of certain predictors. However, using the most significant, we were able to obtain a sufficient model. Furthermore, there are anomalies in the data for the LINE assumptions, but since there are so many observations in our dataset, we are able to ignore them by CLT, but they should be taken into account later.
+# Discussion
+Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of smokers stratified by age show that the average age of smokers is slightly lower than that of non-smokers. The relationship between the variables age and children were also plotted in a scatter plot. There is no visible pattern or correlation in the data. Most of the data is concentrated between 0 and 3 children across all ages. The points are random and evenly distributed. 
+
+Further improvements could be made to the model by using AIC or BIC to complete forward or backward selection of certain predictors. However, using the most significant, we were able to obtain a sufficient model. Furthermore, there are anomalies in the data for the LINE assumptions, but since there are so many observations in our dataset, we are able to ignore them by CLT, but they should be taken into account later. In addition, we can use the anova table in the future to examine whether the insignificant variables actually have a coefficient estimates that's closed to zero. 
 
 # Conclusion
 
+In conclusion, this project demonstrated a completely data analysis pipeline, from data collection to model comparison. In addition, we practice the concepts regarding different diagnostic graphs, and examine the lasso regression model in a meaningful way. Based on the results, we believe that the full model is probably the best model that matches all the assumptions of a linear regression model, except that the full model contains some large leverage points. 
 
 # Code Appendix 
 ```{r}
