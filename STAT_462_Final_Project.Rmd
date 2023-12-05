@@ -323,11 +323,11 @@ RMSE_lasso <- sqrt(MSE_lasso)
 ```{r}
 coef_lasso
 ```
-Above is the coefficient estimates for our lasso regression model, our lasso regression model utilized the entire dataset because one of the important properties of lasso regression is it's ability to do feature selections. Based on the coefficient estimates, we can tell that the variable "is_male", "is_southeast", and "is_northwest" shrinkage to zero as they are not important. The final RMSE value for our lasso regression is `r RMSE_lasso` which is lower than the RMSE of the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. 
+Above is the coefficient estimates for our lasso regression model, our lasso regression model utilized the entire dataset because one of the important properties of lasso regression is it's ability to do feature selections. Based on the coefficient estimates, we can tell that the variable "is_male", "is_southeast", and "is_northwest" shrinkage to zero as they are not important. The final RMSE value for our lasso regression is `r round(RMSE_lasso, 2)` which is lower than the RMSE of the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. 
 
 # Model Comparison
 
-Despite having the ability to perform feature selection, the lasso regression model only outperforms the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. We can only concluded that the lasso regression model, unlike our anticipation, is not suitable for the insurance dataset. On the other hand, the adjusted model actually performed worse than the full model, indicating the possibility that the coefficient estimates of the insignificant variables might not be zero.  
+Despite having the ability to perform feature selection, the lasso regression model only outperforms the adjusted model by `r round(RMSE_mlr - RMSE_lasso, 2)`. We can only concluded that the lasso regression model, unlike our anticipation, is not the best approach for the insurance dataset. On the other hand, the adjusted model actually performed worse than the full model, indicating the possibility that the coefficient estimates of the insignificant variables might not be zero.  
 
 # Discussion
 Several data visualization techniques were utilized for exploratory analysis of the data. The boxplots of smokers stratified by age show that the average age of smokers is slightly lower than that of non-smokers. The relationship between the variables age and children were also plotted in a scatter plot. There is no visible pattern or correlation in the data. Most of the data is concentrated between 0 and 3 children across all ages. The points are random and evenly distributed. 
@@ -336,7 +336,7 @@ Further improvements could be made to the model by using AIC or BIC to complete 
 
 # Conclusion
 
-In conclusion, this project demonstrated a completely data analysis pipeline, from data collection to model comparison. In addition, we practice the concepts regarding different diagnostic graphs, and examine the lasso regression model in a meaningful way. Based on the results, we believe that the full model is probably the best model that matches all the assumptions of a linear regression model, except that the full model contains some large leverage points. 
+In conclusion, this project demonstrated a completely data analysis pipeline, from data collection to model comparison. In addition, we practice the concepts regarding different diagnostic graphs, and examine the lasso regression model in a meaningful way. Based on the results, we concluded that the full model is probably matches all the assumptions of a linear regression model, except that the full model contains some large leverage points. And the lasso regression model has shown a slightly improvement in predicting the actual insurance cost.  
 
 # Code Appendix 
 ```{r}
