@@ -161,24 +161,6 @@ RMSE_mlr <- round(sqrt(MSE_mlr), 2)
 print(paste("RMSE for Multiple Linear Regression: ", RMSE_mlr))
 ```
 
-```{r}
-# Diagnostic plot - Residuals vs Fitted values
-plot(mlr_model$fitted.values, mlr_model$residuals)
-abline(h = 0, col = "red")
-# Diagnostic plot - QQ plot for residuals
-qqnorm(mlr_model$residuals)
-qqline(mlr_model$residuals, col = "red")
-```
-
-```{r}
-# Check for multicollinearity using Variance Inflation Factor (VIF)
-mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
-# Using alias to check for the coefficients
-print(alias(mlr_model_1))
-# Calculate VIF
-vif(mlr_model_1)
-```
-
 ***Model Summary:***
 
 The model explains a significant amount of variance in the charges, with an R-squared value of 0.7533. This indicates that approximately 75.33% of the variability can be explained by the model.   
@@ -224,16 +206,6 @@ We analyze these assumptions by using diagnostic plots on our full model.
 plot(mlr_model$fitted.values, mlr_model$residuals)
 abline(h = 0, col = "red")
 
-# Scatter plot with studentized deleted residuals
-h <- hatvalues(mlr_model)
-sum <- summary(mlr_model)
-sig2hat <- sum$sigma^2
-r <- mlr_model$residuals/sqrt(sig2hat*(1-h))
-n <- 1338
-p <- 7
-t <- r*((n-p-1)/(n-p-r^2))^(1/2)
-plot(h, t)
-
 # Large leverage points
 plot(h,xlab='Observation',ylab='Leverage',main='Leverage')
 abline(h=2*p/n,lty=2,col="red")
@@ -252,7 +224,7 @@ qqline(mlr_model$residuals, col = "red")
 shapiro.test(mlr_model$residuals)
 ```
 
-Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably ignore the issue. This is because (n - p) >= 30 where (1338 - 10) >= 30.
+Based on the Shapiro-Wilk test, the data is not normally distributed. However, due to the fact our dataset is quite large, we can reasonably use the central limit theorem. This is because (n - p) >= 30 where (1338 - 10) >= 30.
 
 ```{r}
 # Check for multicollinearity using Variance Inflation Factor (VIF)
@@ -262,7 +234,7 @@ mlr_model_1 <- lm(charges ~ . -is_northeast, data = train)
 print(alias(mlr_model_1))
 
 # Calculate VIF
-vif(mlr_model_1)
+vif(mlr_model)
 ```
 
 ## LASSO Regression
